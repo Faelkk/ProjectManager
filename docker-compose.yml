@@ -1,0 +1,37 @@
+services:
+  mongo_db:
+    image: mongo:latest
+    container_name: mongo_db
+    restart: always
+    environment:
+      MONGO_INITDB_DATABASE: projectmanager
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - minha-rede
+
+  ProjectManager:
+    container_name: ProjectManager
+    build:
+      context: ./ProjectManager/src
+      dockerfile: ProjectManager.Presentation/Dockerfile
+    ports:
+      - "5010:5010"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - DatabaseSettings__ConnectionString=mongodb://mongo_db:27017
+      - DatabaseSettings__DatabaseName=my_database
+    depends_on:
+      - mongo_db
+    networks:
+      - minha-rede
+
+volumes:
+  mongo_data:
+    driver: local
+
+networks:
+  minha-rede:
+    driver: bridge

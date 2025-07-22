@@ -1,0 +1,26 @@
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+
+namespace ProjectManager.Infrastructure.Models;
+
+public class ProjectDocument
+{
+    [BsonId]
+    [BsonRepresentation(BsonType.ObjectId)]
+    public string Id { get; set; } = default!;
+
+    [BsonElement("name")]
+    public string Name { get; set; } = default!;
+
+    [BsonElement("description")]
+    public string Description { get; set; } = default!;
+
+    [BsonElement("skills")]
+    public List<string> Skills { get; set; } = new();
+
+    [BsonElement("thumbnailUrl")]
+    public string? ThumbnailUrl { get; set; }
+
+    [BsonElement("createdAt")]
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+}

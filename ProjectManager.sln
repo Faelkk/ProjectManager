@@ -11,8 +11,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectManager.Application"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectManager.Domain", "ProjectManager\src\ProjectManager.Domain\ProjectManager.Domain.csproj", "{C658CAAE-7B2F-4D0B-8540-81A1A98689B9}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ProjectManager.presentation", "ProjectManager.presentation", "{E1CFB4AE-40B0-842B-424E-573C75393089}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectManager.Presentation", "ProjectManager\src\ProjectManager.presentation\ProjectManager.Presentation.csproj", "{9476BF5E-9C38-4D01-B116-1664162002C9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectManager.Infrastructure", "ProjectManager\src\ProjectManager.Infrastructure\ProjectManager.Infrastructure.csproj", "{6441664E-B517-4271-8DAF-508162687E67}"

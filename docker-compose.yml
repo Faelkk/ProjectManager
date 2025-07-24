@@ -12,13 +12,13 @@ services:
     networks:
       - minha-rede
 
-  ProjectManager:
-    container_name: ProjectManager
+  projectmanager:
+    container_name: projectmanager
     build:
       context: ./ProjectManager/src
       dockerfile: ProjectManager.Presentation/Dockerfile
     ports:
-      - "5010:5010"
+      - "5010:8080"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - DatabaseSettings__ConnectionString=mongodb://mongo_db:27017
@@ -27,6 +27,7 @@ services:
       - mongo_db
     networks:
       - minha-rede
+
 
 volumes:
   mongo_data:

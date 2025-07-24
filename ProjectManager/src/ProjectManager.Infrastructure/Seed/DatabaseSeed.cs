@@ -6,10 +6,12 @@ using ProjectManager.Infrastructure.Mongo;
 public class DatabaseSeed
 {
     private readonly IMongoCollection<UserDocument> _users;
+    private readonly IPasswordHasher _passwordHasher;
 
-    public DatabaseSeed(IDatabaseContext context)
+    public DatabaseSeed(IDatabaseContext context, IPasswordHasher passwordHasher)
     {
         _users = context.Users;
+        _passwordHasher = passwordHasher;
     }
 
     public async Task SeedAsync()
@@ -24,6 +26,15 @@ public class DatabaseSeed
                 Email = "admin@domain.com",
                 Role = "Admin",
             };
+
+            var user = new User
+            {
+                Id = adminUser.Id,
+                Username = adminUser.Username,
+                Email = adminUser.Email,
+                Role = adminUser.Role,
+            };
+            adminUser.Password = _passwordHasher.HashPassword(user, "admin123");
 
             await _users.InsertOneAsync(adminUser);
         }

@@ -80,4 +80,7 @@ using (var scope = app.Services.CreateScope())
 
 app.Run();
 
-public partial class Progam { }
+namespace ProjectManager.Presentation
+{
+    public partial class Program { }
+}

@@ -2,10 +2,10 @@ using HotChocolate.Authorization;
 using ProjectManager.Application.Interfaces;
 
 [ExtendObjectType("Mutation")]
-[Authorize(Policy = "Authenticated")]
-[Authorize(Policy = "Admin")]
 public class ProjectMutation
 {
+    [Authorize(Policy = "Authenticated")]
+    [Authorize(Policy = "Admin")]
     public async Task<Project> CreateProject(
         string name,
         string description,
@@ -40,6 +40,8 @@ public class ProjectMutation
         return await service.CreateAsync(project);
     }
 
+    [Authorize(Policy = "Authenticated")]
+    [Authorize(Policy = "Admin")]
     public async Task<Project> UpdateProject(
         UpdateProjectInput input,
         [Service] IProjectService service
@@ -67,6 +69,8 @@ public class ProjectMutation
         return await service.UpdateAsync(existingProject);
     }
 
+    [Authorize(Policy = "Authenticated")]
+    [Authorize(Policy = "Admin")]
     public async Task<bool> DeleteProject(string id, [Service] IProjectService service)
     {
         var existingProject = await service.GetByIdAsync(id);

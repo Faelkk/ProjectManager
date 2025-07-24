@@ -1,12 +1,13 @@
 using HotChocolate.Authorization;
 
 [ExtendObjectType("Query")]
-[Authorize(Policy = "Authenticated")]
 public class UserQuery
 {
+    [Authorize(Policy = "Authenticated")]
     public Task<IEnumerable<User>> GetUsers([Service] IUserService service) =>
         service.GetAllAsync();
 
-    public Task<User?> GetUserById(string id, [Service] IUserService service) =>
+    [Authorize(Policy = "Authenticated")]
+    public Task<User?> GetUserById([GraphQLName("id")] string id, [Service] IUserService service) =>
         service.GetByIdAsync(id);
 }

@@ -62,6 +62,7 @@ public class UserRepository : IUserRepository
             Username = user.Username,
             Email = user.Email,
             Password = user.Password,
+            Role = user.Role,
         };
 
         await _context.Users.InsertOneAsync(document);

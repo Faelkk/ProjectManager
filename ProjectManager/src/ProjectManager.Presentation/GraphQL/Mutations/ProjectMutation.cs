@@ -1,7 +1,9 @@
-// API/GraphQL/Mutations/ProjectMutation.cs
+using HotChocolate.Authorization;
 using ProjectManager.Application.Interfaces;
 
 [ExtendObjectType("Mutation")]
+[Authorize(Policy = "Authenticated")]
+[Authorize(Policy = "Admin")]
 public class ProjectMutation
 {
     public async Task<Project> CreateProject(

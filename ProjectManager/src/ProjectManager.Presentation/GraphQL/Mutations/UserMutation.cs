@@ -1,3 +1,5 @@
+using HotChocolate.Authorization;
+
 [ExtendObjectType("Mutation")]
 public class UserMutation
 {
@@ -43,6 +45,8 @@ public class UserMutation
         return new UserResponseTokenDto { Token = token };
     }
 
+    [Authorize(Policy = "Authenticated")]
+    [Authorize(Policy = "Admin")]
     public async Task<User> UpdateUser(UpdateUserInput input, [Service] IUserService service)
     {
         var existingUser = await service.GetByIdAsync(input.Id);
@@ -55,9 +59,14 @@ public class UserMutation
         if (input.Email != null)
             existingUser.Email = input.Email;
 
+        if (input.Role != null)
+            existingUser.Role = input.Role;
+
         return await service.UpdateAsync(existingUser);
     }
 
+    [Authorize(Policy = "Authenticated")]
+    [Authorize(Policy = "Admin")]
     public async Task<bool> DeleteUser(string id, [Service] IUserService service)
     {
         var existingUser = await service.GetByIdAsync(id);

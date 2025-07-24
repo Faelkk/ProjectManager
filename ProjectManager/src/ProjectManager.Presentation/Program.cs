@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -35,10 +36,15 @@ builder
         };
     });
 
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("Admin", policy => policy.RequireClaim(ClaimTypes.Role, "Admin"));
+    options.AddPolicy("Authenticated", policy => policy.RequireAuthenticatedUser());
+});
 
 builder
     .Services.AddGraphQLServer()
+    .AddAuthorization()
     .ModifyRequestOptions(opt => opt.IncludeExceptionDetails = true)
     .AddQueryType(d => d.Name("Query"))
     .AddType<ProjectQuery>()
@@ -50,6 +56,18 @@ builder
 var app = builder.Build();
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.Use(
+    async (context, next) =>
+    {
+        var user = context.User;
+        Console.WriteLine($"User authenticated: {user.Identity?.IsAuthenticated}");
+        Console.WriteLine(
+            $"Claims: {string.Join(", ", user.Claims.Select(c => $"{c.Type}={c.Value}"))}"
+        );
+        await next();
+    }
+);
 
 app.MapGet("/", () => "Hello World!");
 app.MapGraphQL();

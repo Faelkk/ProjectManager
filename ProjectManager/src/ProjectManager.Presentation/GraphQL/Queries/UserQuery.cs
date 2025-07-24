@@ -1,4 +1,7 @@
+using HotChocolate.Authorization;
+
 [ExtendObjectType("Query")]
+[Authorize(Policy = "Authenticated")]
 public class UserQuery
 {
     public Task<IEnumerable<User>> GetUsers([Service] IUserService service) =>

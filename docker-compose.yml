@@ -4,7 +4,7 @@ services:
     container_name: mongo_db
     restart: always
     environment:
-      MONGO_INITDB_DATABASE: projectmanager
+      MONGO_INITDB_DATABASE: ${DB_NAME}
     ports:
       - "27017:27017"
     volumes:
@@ -20,14 +20,13 @@ services:
     ports:
       - "5010:8080"
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - DatabaseSettings__ConnectionString=mongodb://mongo_db:27017
-      - DatabaseSettings__DatabaseName=my_database
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
+      - DatabaseSettings__ConnectionString=${DB_CONNECTION_STRING}
+      - DatabaseSettings__DatabaseName=${DB_NAME}
     depends_on:
       - mongo_db
     networks:
       - minha-rede
-
 
 volumes:
   mongo_data:

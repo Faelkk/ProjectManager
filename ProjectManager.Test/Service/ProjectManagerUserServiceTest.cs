@@ -25,14 +25,11 @@ public class ProjectManagerUserServiceTest
         [Fact]
         public async Task GetAllAsync_ShouldReturnUsers()
         {
-            // Arrange
             var users = new List<User> { new() { Email = "test@test.com" } };
             _userRepoMock.Setup(r => r.GetAllAsync()).ReturnsAsync(users);
 
-            // Act
             var result = await _userService.GetAllAsync();
 
-            // Assert
             Assert.Single(result);
             Assert.Equal("test@test.com", result.First().Email);
         }
@@ -40,14 +37,11 @@ public class ProjectManagerUserServiceTest
         [Fact]
         public async Task GetByIdAsync_ShouldReturnUser()
         {
-            // Arrange
             var user = new User { Id = "123", Email = "user@test.com" };
             _userRepoMock.Setup(r => r.GetByIdAsync("123")).ReturnsAsync(user);
 
-            // Act
             var result = await _userService.GetByIdAsync("123");
 
-            // Assert
             Assert.NotNull(result);
             Assert.Equal("user@test.com", result.Email);
         }
@@ -55,7 +49,6 @@ public class ProjectManagerUserServiceTest
         [Fact]
         public async Task CreateAsync_WithValidUser_ShouldReturnToken()
         {
-            // Arrange
             var user = new User { Email = "new@user.com", Password = "123" };
 
             _userRepoMock.Setup(r => r.GetByEmailAsync(user.Email)).ReturnsAsync((User?)null); // usuário ainda não existe
@@ -68,10 +61,8 @@ public class ProjectManagerUserServiceTest
 
             _tokenServiceMock.Setup(t => t.GenerateToken(user)).Returns("mocked-token");
 
-            // Act
             var token = await _userService.CreateAsync(user);
 
-            // Assert
             Assert.Equal("mocked-token", token);
             _userRepoMock.Verify(
                 r => r.CreateAsync(It.Is<User>(u => u.Password == "hashed123")),
@@ -82,13 +73,11 @@ public class ProjectManagerUserServiceTest
         [Fact]
         public async Task CreateAsync_WhenEmailExists_ShouldThrow()
         {
-            // Arrange
             var existingUser = new User { Email = "exists@user.com" };
             _userRepoMock
                 .Setup(r => r.GetByEmailAsync(existingUser.Email))
                 .ReturnsAsync(existingUser);
 
-            // Act & Assert
             await Assert.ThrowsAsync<ArgumentException>(() =>
                 _userService.CreateAsync(existingUser)
             );
@@ -126,7 +115,6 @@ public class ProjectManagerUserServiceTest
         [Fact]
         public async Task UpdateAsync_ShouldReturnUpdatedUser()
         {
-            // Arrange
             var user = new User
             {
                 Id = "abc123",
@@ -138,10 +126,8 @@ public class ProjectManagerUserServiceTest
 
             _userRepoMock.Setup(r => r.UpdateAsync(user)).ReturnsAsync(user);
 
-            // Act
             var result = await _userService.UpdateAsync(user);
 
-            // Assert
             Assert.Equal("updatedUser", result.Username);
             Assert.Equal("updated@test.com", result.Email);
             _userRepoMock.Verify(r => r.UpdateAsync(user), Times.Once);
@@ -150,15 +136,12 @@ public class ProjectManagerUserServiceTest
         [Fact]
         public async Task DeleteAsync_ShouldCallRepositoryDeleteOnce()
         {
-            // Arrange
             var userId = "abc123";
 
             _userRepoMock.Setup(r => r.DeleteAsync(userId)).Returns(Task.CompletedTask);
 
-            // Act
             await _userService.DeleteAsync(userId);
 
-            // Assert
             _userRepoMock.Verify(r => r.DeleteAsync(userId), Times.Once);
         }
     }

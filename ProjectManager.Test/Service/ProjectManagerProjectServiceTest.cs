@@ -72,7 +72,6 @@ namespace ProjectManager.Test.Application.Services
 
             await _projectService.DeleteAsync(projectId);
 
-            // Assert
             _projectRepoMock.Verify(r => r.DeleteAsync(projectId), Times.Once);
         }
     }

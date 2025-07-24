@@ -29,7 +29,6 @@ public class ProjectManagerDomainTest
     [Fact]
     public void CreateUser_WithValidData_ShouldSetAllProperties()
     {
-        // Act
         var user = new User
         {
             Id = "123",
@@ -38,8 +37,8 @@ public class ProjectManagerDomainTest
             Password = "securePassword",
             Role = "Admin",
         };
-
-        // Assert
+        Assert.NotNull(user);
+        Assert.NotEmpty(user.Password);
         Assert.Equal("123", user.Id);
         Assert.Equal("rafael", user.Username);
         Assert.Equal("rafael@example.com", user.Email);

@@ -1,3 +1,7 @@
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
 using ProjectManager.Application.Interfaces;
 using ProjectManager.Infrastructure.Context;
 using ProjectManager.Infrastructure.Settings;
@@ -7,19 +11,53 @@ builder.Services.Configure<DatabaseSettings>(builder.Configuration.GetSection("D
 builder.Services.AddSingleton<IDatabaseContext, DatabaseContext>();
 builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
+builder.Services.AddScoped<ITokenService, TokenService>();
+
+builder.Services.AddScoped<DatabaseSeed>();
+
+builder.Services.Configure<TokenOptions>(builder.Configuration.GetSection("JwtSettings"));
+
+builder
+    .Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        var secret = builder.Configuration["JwtSettings:Secret"];
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = false,
+            ValidateAudience = false,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret!)),
+        };
+    });
+
+builder.Services.AddAuthorization();
 
 builder
     .Services.AddGraphQLServer()
+    .ModifyRequestOptions(opt => opt.IncludeExceptionDetails = true)
     .AddQueryType(d => d.Name("Query"))
     .AddType<ProjectQuery>()
+    .AddType<UserQuery>()
     .AddMutationType(d => d.Name("Mutation"))
-    .AddType<ProjectMutation>();
+    .AddType<ProjectMutation>()
+    .AddType<UserMutation>();
 
 var app = builder.Build();
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapGet("/", () => "Hello World!");
+app.MapGraphQL();
 
-var seeder = app.Services.GetRequiredService<DatabaseSeed>();
-await seeder.SeedAsync();
+using (var scope = app.Services.CreateScope())
+{
+    var seeder = scope.ServiceProvider.GetRequiredService<DatabaseSeed>();
+    await seeder.SeedAsync();
+}
 
 app.Run();

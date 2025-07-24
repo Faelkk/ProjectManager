@@ -18,6 +18,9 @@ public class ProjectDocument
     [BsonElement("skills")]
     public List<string> Skills { get; set; } = new();
 
+    [BsonElement("repositoryUrl")]
+    public string RepositoryUrl { get; set; } = default!;
+
     [BsonElement("thumbnailUrl")]
     public string? ThumbnailUrl { get; set; }
 

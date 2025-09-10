@@ -23,6 +23,10 @@ public class ProjectDocument
 
     [BsonElement("thumbnailUrl")]
     public string? ThumbnailUrl { get; set; }
+    
+    
+    [BsonElement("thumbnailPublicId")]
+    public string? ThumbnailPublicId { get; set; }
 
     [BsonElement("createdAt")]
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

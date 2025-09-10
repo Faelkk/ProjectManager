@@ -23,6 +23,7 @@ public class ProjectRepository : IProjectRepository
             Description = d.Description,
             Skills = d.Skills,
             ThumbnailUrl = d.ThumbnailUrl,
+            ThumbnailPublicId = d.ThumbnailPublicId,
             CreatedAt = d.CreatedAt,
         });
     }
@@ -42,6 +43,7 @@ public class ProjectRepository : IProjectRepository
             Description = doc.Description,
             Skills = doc.Skills,
             ThumbnailUrl = doc.ThumbnailUrl,
+            ThumbnailPublicId = doc.ThumbnailPublicId,
             CreatedAt = doc.CreatedAt,
         };
     }
@@ -54,6 +56,7 @@ public class ProjectRepository : IProjectRepository
             Description = project.Description,
             Skills = project.Skills,
             ThumbnailUrl = project.ThumbnailUrl,
+            ThumbnailPublicId =    project.ThumbnailPublicId,
             RepositoryUrl = project.RepositoryUrl,
             CreatedAt = project.CreatedAt,
         };
@@ -73,7 +76,7 @@ public class ProjectRepository : IProjectRepository
             .Update.Set(p => p.Name, project.Name)
             .Set(p => p.Description, project.Description)
             .Set(p => p.Skills, project.Skills)
-            .Set(p => p.ThumbnailUrl, project.ThumbnailUrl)
+            .Set(p => p.ThumbnailUrl, project.ThumbnailUrl).Set(p => p.ThumbnailPublicId, project.ThumbnailPublicId)
             .Set(p => p.RepositoryUrl, project.RepositoryUrl)
             .Set(p => p.CreatedAt, project.CreatedAt);
 
@@ -94,6 +97,8 @@ public class ProjectRepository : IProjectRepository
             Description = updatedDoc.Description,
             Skills = updatedDoc.Skills,
             ThumbnailUrl = updatedDoc.ThumbnailUrl,
+            ThumbnailPublicId = updatedDoc.ThumbnailPublicId,
+            
             RepositoryUrl = updatedDoc.RepositoryUrl,
             CreatedAt = updatedDoc.CreatedAt,
         };

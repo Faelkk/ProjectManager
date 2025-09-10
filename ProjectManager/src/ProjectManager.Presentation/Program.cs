@@ -3,7 +3,9 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
+using ProjectManager.Application;
 using ProjectManager.Application.Interfaces;
+using ProjectManager.Application.Services;
 using ProjectManager.Infrastructure.Context;
 using ProjectManager.Infrastructure.Settings;
 
@@ -16,6 +18,10 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
 builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("Cloudinary"));
+builder.Services.AddScoped<ICloudinaryService, CloudinaryService>();
+
+
 
 builder.Services.AddScoped<DatabaseSeed>();
 
@@ -51,7 +57,7 @@ builder
     .AddType<UserQuery>()
     .AddMutationType(d => d.Name("Mutation"))
     .AddType<ProjectMutation>()
-    .AddType<UserMutation>();
+    .AddType<UserMutation>()  .AddUploadType(); 
 
 var app = builder.Build();
 app.UseAuthentication();

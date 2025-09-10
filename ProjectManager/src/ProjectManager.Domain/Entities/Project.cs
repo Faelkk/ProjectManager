@@ -6,5 +6,7 @@ public class Project
     public List<string> Skills { get; set; } = new List<string>();
     public string RepositoryUrl { get; set; } = null!;
     public string? ThumbnailUrl { get; set; }
+    
+    public string? ThumbnailPublicId { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }

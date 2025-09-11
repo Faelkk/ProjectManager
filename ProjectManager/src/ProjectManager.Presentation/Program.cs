@@ -11,6 +11,7 @@ using ProjectManager.Infrastructure.Settings;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.Configure<DatabaseSettings>(builder.Configuration.GetSection("DatabaseSettings"));
+builder.Services.Configure<AdminSettings>(builder.Configuration.GetSection("AdminSettings"));
 builder.Services.AddSingleton<IDatabaseContext, DatabaseContext>();
 builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
@@ -24,6 +25,7 @@ builder.Services.AddScoped<ICloudinaryService, CloudinaryService>();
 
 
 builder.Services.AddScoped<DatabaseSeed>();
+
 
 builder.Services.Configure<TokenOptions>(builder.Configuration.GetSection("JwtSettings"));
 

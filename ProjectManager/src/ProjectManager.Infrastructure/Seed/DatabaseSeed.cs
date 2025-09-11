@@ -1,17 +1,21 @@
+using Microsoft.Extensions.Options;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using ProjectManager.Infrastructure.Context;
 using ProjectManager.Infrastructure.Mongo;
+using ProjectManager.Infrastructure.Settings;
 
 public class DatabaseSeed
 {
     private readonly IMongoCollection<UserDocument> _users;
     private readonly IPasswordHasher _passwordHasher;
+    private readonly AdminSettings _adminSettings;
 
-    public DatabaseSeed(IDatabaseContext context, IPasswordHasher passwordHasher)
+    public DatabaseSeed(IDatabaseContext context, IPasswordHasher passwordHasher, IOptions<AdminSettings> adminOptions)
     {
         _users = context.Users;
         _passwordHasher = passwordHasher;
+        _adminSettings = adminOptions.Value;
     }
 
     public async Task SeedAsync()
@@ -34,7 +38,7 @@ public class DatabaseSeed
                 Email = adminUser.Email,
                 Role = adminUser.Role,
             };
-            adminUser.Password = _passwordHasher.HashPassword(user, "admin123");
+            adminUser.Password = _passwordHasher.HashPassword(user, _adminSettings.DefaultPassword);
 
             await _users.InsertOneAsync(adminUser);
         }

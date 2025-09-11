@@ -35,6 +35,7 @@ public class ProjectMutation
         {
             using var stream = thumbnail.OpenReadStream();
             thumbnailUrl = await cloudinaryService.UploadImage(thumbnail.Name, stream);
+            
         }
 
         var project = new Project
@@ -42,7 +43,8 @@ public class ProjectMutation
             Name = name,
             Description = description,
             Skills = skills,
-            ThumbnailUrl = thumbnailUrl.Url,
+            ThumbnailUrl = thumbnailUrl?.Url,
+            ThumbnailPublicId = thumbnailUrl?.PublicId,
             RepositoryUrl = repositoryUrl,
             CreatedAt = DateTime.UtcNow,
         };

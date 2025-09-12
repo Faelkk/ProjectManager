@@ -24,6 +24,8 @@ public class ProjectRepository : IProjectRepository
             Skills = d.Skills,
             ThumbnailUrl = d.ThumbnailUrl,
             ThumbnailPublicId = d.ThumbnailPublicId,
+            AvatarPublicId = d.AvatarPublicId,
+            AvatarUrl = d.AvatarUrl,
             CreatedAt = d.CreatedAt,
         });
     }
@@ -44,6 +46,8 @@ public class ProjectRepository : IProjectRepository
             Skills = doc.Skills,
             ThumbnailUrl = doc.ThumbnailUrl,
             ThumbnailPublicId = doc.ThumbnailPublicId,
+            AvatarPublicId = doc.AvatarPublicId,
+            AvatarUrl = doc.AvatarUrl,
             CreatedAt = doc.CreatedAt,
         };
     }
@@ -58,6 +62,8 @@ public class ProjectRepository : IProjectRepository
             ThumbnailUrl = project.ThumbnailUrl,
             ThumbnailPublicId =    project.ThumbnailPublicId,
             RepositoryUrl = project.RepositoryUrl,
+            AvatarPublicId = project.AvatarPublicId,
+            AvatarUrl = project.AvatarUrl,
             CreatedAt = project.CreatedAt,
         };
 
@@ -76,7 +82,8 @@ public class ProjectRepository : IProjectRepository
             .Update.Set(p => p.Name, project.Name)
             .Set(p => p.Description, project.Description)
             .Set(p => p.Skills, project.Skills)
-            .Set(p => p.ThumbnailUrl, project.ThumbnailUrl).Set(p => p.ThumbnailPublicId, project.ThumbnailPublicId)
+            .Set(p => p.ThumbnailUrl, project.ThumbnailUrl).Set(p => p.ThumbnailPublicId, project.ThumbnailPublicId).
+             Set(p => p.AvatarPublicId, project.AvatarPublicId).Set(p => p.AvatarUrl, project.AvatarUrl)
             .Set(p => p.RepositoryUrl, project.RepositoryUrl)
             .Set(p => p.CreatedAt, project.CreatedAt);
 
@@ -98,7 +105,8 @@ public class ProjectRepository : IProjectRepository
             Skills = updatedDoc.Skills,
             ThumbnailUrl = updatedDoc.ThumbnailUrl,
             ThumbnailPublicId = updatedDoc.ThumbnailPublicId,
-            
+            AvatarPublicId = updatedDoc.AvatarPublicId,
+            AvatarUrl = updatedDoc.AvatarUrl,
             RepositoryUrl = updatedDoc.RepositoryUrl,
             CreatedAt = updatedDoc.CreatedAt,
         };

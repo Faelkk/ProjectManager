@@ -23,9 +23,6 @@ public class CloudinaryService : ICloudinaryService
         var uploadParams = new ImageUploadParams
         {
             File = new FileDescription(fileName, fileStream),
-            UseFilename = true,
-            UniqueFilename = false,
-            Overwrite = true,
         };
 
         var uploadResult = await _cloudinary.UploadAsync(uploadParams);

@@ -1,11 +1,13 @@
 using HotChocolate.Authorization;
 using ProjectManager.Application.DTOS;
+using ProjectManager.Application.FileValidator;
 using ProjectManager.Application.Interfaces;
+using ProjectManager.API.GraphQL.Adapters;
+using ProjectManager.Application.Common.Interfaces;
 
 [ExtendObjectType("Mutation")]
 public class ProjectMutation
 {
-    
     [Authorize(Policy = "Authenticated")]
     [Authorize(Policy = "Admin")]
     public async Task<Project> CreateProject(
@@ -13,7 +15,8 @@ public class ProjectMutation
         string description,
         List<string> skills,
         string repositoryUrl,
-        IFile? thumbnail, // 
+        IFile? thumbnail, 
+        IFile? avatar, 
         [Service] IProjectService service,
         [Service] ICloudinaryService cloudinaryService
     )
@@ -29,32 +32,42 @@ public class ProjectMutation
 
         if (string.IsNullOrWhiteSpace(repositoryUrl))
             throw new GraphQLException("O URL do repositório é obrigatório.");
-        
+    
         CloudinaryUploadResult? thumbnailUrl = null;
         if (thumbnail != null)
         {
-            using var stream = thumbnail.OpenReadStream();
-            thumbnailUrl = await cloudinaryService.UploadImage(thumbnail.Name, stream);
-            
+            var appFile = new HotChocolateFileAdapter(thumbnail);
+            FileValidator.ValidateImage(appFile);
+
+            using var stream = appFile.OpenReadStream();
+            thumbnailUrl = await cloudinaryService.UploadImage(appFile.Name, stream);
         }
 
+        CloudinaryUploadResult? avatarUrl = null;
+        if (avatar != null)
+        {
+            var appFile = new HotChocolateFileAdapter(avatar);
+            FileValidator.ValidateImage(appFile);
+
+            using var stream = appFile.OpenReadStream();
+            avatarUrl = await cloudinaryService.UploadImage(appFile.Name, stream);
+        }
         var project = new Project
         {
             Name = name,
             Description = description,
             Skills = skills,
-            ThumbnailUrl = thumbnailUrl?.Url,
-            ThumbnailPublicId = thumbnailUrl?.PublicId,
             RepositoryUrl = repositoryUrl,
             CreatedAt = DateTime.UtcNow,
+            ThumbnailUrl = thumbnailUrl?.Url,
+            ThumbnailPublicId = thumbnailUrl?.PublicId,
+            AvatarUrl = avatarUrl?.Url,
+            AvatarPublicId = avatarUrl?.PublicId
         };
-
         return await service.CreateAsync(project);
     }
-
-
-
-  [Authorize(Policy = "Authenticated")]
+    
+    [Authorize(Policy = "Authenticated")]
 [Authorize(Policy = "Admin")]
 public async Task<Project> UpdateProject(
     string id,
@@ -63,6 +76,7 @@ public async Task<Project> UpdateProject(
     List<string>? skills,
     string? repositoryUrl,
     IFile? thumbnail, 
+    IFile? avatar, 
     [Service] IProjectService service,
     [Service] ICloudinaryService cloudinaryService
 )
@@ -83,18 +97,38 @@ public async Task<Project> UpdateProject(
     if (!string.IsNullOrWhiteSpace(repositoryUrl))
         existingProject.RepositoryUrl = repositoryUrl;
     
-    
     if (thumbnail != null)
     {
-        using var stream = thumbnail.OpenReadStream();
-        var newUrl = await cloudinaryService.UploadImage(thumbnail.Name, stream);
-        existingProject.ThumbnailUrl = newUrl.Url;
-        existingProject.ThumbnailPublicId = newUrl.PublicId;
+        if (!string.IsNullOrWhiteSpace(existingProject.ThumbnailPublicId))
+            await cloudinaryService.DeleteFileAsync(existingProject.ThumbnailPublicId);
+
+        var appFile = new HotChocolateFileAdapter(thumbnail);
+        FileValidator.ValidateImage(appFile);
+
+        using var stream = appFile.OpenReadStream();
+        var newThumbnail = await cloudinaryService.UploadImage(appFile.Name, stream);
+
+        existingProject.ThumbnailUrl = newThumbnail.Url;
+        existingProject.ThumbnailPublicId = newThumbnail.PublicId;
+    }
+    
+    if (avatar != null)
+    {
+        if (!string.IsNullOrWhiteSpace(existingProject.AvatarPublicId))
+            await cloudinaryService.DeleteFileAsync(existingProject.AvatarPublicId);
+
+        var appFile = new HotChocolateFileAdapter(avatar);
+        FileValidator.ValidateImage(appFile);
+
+        using var stream = appFile.OpenReadStream();
+        var newAvatar = await cloudinaryService.UploadImage(appFile.Name, stream);
+
+        existingProject.AvatarUrl = newAvatar.Url;
+        existingProject.AvatarPublicId = newAvatar.PublicId;
     }
 
     return await service.UpdateAsync(existingProject);
 }
-
 
 [Authorize(Policy = "Authenticated")]
 [Authorize(Policy = "Admin")]
@@ -109,10 +143,13 @@ public async Task<bool> DeleteProject(string id, [Service] IProjectService servi
         await cloudinaryService.DeleteFileAsync(existingProject.ThumbnailPublicId);
     }
 
+    if (!string.IsNullOrWhiteSpace(existingProject.AvatarPublicId))
+    {
+        await cloudinaryService.DeleteFileAsync(existingProject.AvatarPublicId);
+    }
     await service.DeleteAsync(id);
     return true;
 }
-
 }
 
 

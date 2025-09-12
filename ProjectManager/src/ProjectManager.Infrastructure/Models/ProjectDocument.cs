@@ -18,6 +18,12 @@ public class ProjectDocument
     [BsonElement("skills")]
     public List<string> Skills { get; set; } = new();
 
+    [BsonElement("avatarUrl")]
+    public string? AvatarUrl { get; set; }
+    
+    [BsonElement("avatarPublicId")]
+    public string? AvatarPublicId { get; set; }
+    
     [BsonElement("repositoryUrl")]
     public string RepositoryUrl { get; set; } = default!;
 
